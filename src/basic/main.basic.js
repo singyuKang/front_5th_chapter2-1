@@ -1,18 +1,11 @@
 import { attachEventListener } from './eventManager.js';
 import { state, elements } from './state.js';
 
-function main() {
-  state.productList = [
-    { id: 'p1', name: '상품1', val: 10000, q: 50 },
-    { id: 'p2', name: '상품2', val: 20000, q: 30 },
-    { id: 'p3', name: '상품3', val: 30000, q: 20 },
-    { id: 'p4', name: '상품4', val: 15000, q: 0 },
-    { id: 'p5', name: '상품5', val: 25000, q: 10 },
-  ];
-  var root = document.getElementById('app');
-  let cont = document.createElement('div');
-  var wrap = document.createElement('div');
-  let hTxt = document.createElement('h1');
+function createUI() {
+  const root = document.getElementById('app');
+  const cont = document.createElement('div');
+  const wrap = document.createElement('div');
+  const hTxt = document.createElement('h1');
   elements.cartDisp = document.createElement('div');
   elements.sum = document.createElement('div');
   elements.sel = document.createElement('select');
@@ -42,6 +35,21 @@ function main() {
   wrap.appendChild(elements.stockInfo);
   cont.appendChild(wrap);
   root.appendChild(cont);
+}
+
+function initializeState() {
+  state.productList = [
+    { id: 'p1', name: '상품1', val: 10000, q: 50 },
+    { id: 'p2', name: '상품2', val: 20000, q: 30 },
+    { id: 'p3', name: '상품3', val: 30000, q: 20 },
+    { id: 'p4', name: '상품4', val: 15000, q: 0 },
+    { id: 'p5', name: '상품5', val: 25000, q: 10 },
+  ];
+}
+
+function main() {
+  initializeState();
+  createUI();
   calcCart();
   setTimeout(function () {
     setInterval(function () {
