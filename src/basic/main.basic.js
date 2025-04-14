@@ -79,7 +79,7 @@ function updateSelOpts() {
     elements.sel.appendChild(opt);
   });
 }
-export function calcCart() {
+function calcCart() {
   state.totalAmt = 0;
   state.itemCnt = 0;
   var cartItems = elements.cartDisp.children;
@@ -167,7 +167,7 @@ function main() {
   updateSelOpts();
   calcCart();
   setUpSale();
-  attachEventListener();
+  attachEventListener(calcCart);
 }
 
 main();

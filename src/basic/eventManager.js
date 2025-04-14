@@ -1,7 +1,6 @@
-import { calcCart } from './main.basic.js';
 import { state, elements } from './state.js';
 
-export function attachEventListener() {
+export function attachEventListener(calcCart) {
   elements.addBtn.addEventListener('click', function () {
     var selItem = elements.sel.value;
     var itemToAdd = state.productList.find(function (p) {
