@@ -47,10 +47,7 @@ function initializeState() {
   ];
 }
 
-function main() {
-  initializeState();
-  createUI();
-  calcCart();
+function setUpSale() {
   setTimeout(function () {
     setInterval(function () {
       var luckyItem =
@@ -78,6 +75,13 @@ function main() {
       }
     }, 60000);
   }, Math.random() * 20000);
+}
+
+function main() {
+  initializeState();
+  createUI();
+  calcCart();
+  setUpSale();
 }
 function updateSelOpts() {
   elements.sel.innerHTML = '';
