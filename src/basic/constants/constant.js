@@ -10,4 +10,11 @@ export const CONSTANTS = {
     INTERVAL: 60000, // 60초마다 체크
     MAX_DELAY: 20000, // 최대 20초 지연
   },
+  DISCOUNT_TABLE: {
+    p1: 0.1,
+    p2: 0.15,
+    p3: 0.2,
+    p4: 0.05,
+    p5: 0.25,
+  },
 };

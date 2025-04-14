@@ -14,7 +14,7 @@ function createUI() {
   elements.addBtn = createEl('button', { id: 'add-to-cart', className: 'bg-blue-500 text-white px-4 py-2 rounded', text: '추가' });
   elements.stockInfo = createEl('div', { id: 'stock-status', className: 'text-sm text-gray-500 mt-2' });
 
-  //Layouy 정의
+  //Layout 생성
   const layout = buildLayout();
   root.appendChild(layout);
 }
@@ -102,57 +102,74 @@ function updateSelOpts() {
 function calcCart() {
   state.totalAmt = 0;
   state.itemCnt = 0;
-  var cartItems = elements.cartDisp.children;
-  var subTot = 0;
-  for (var i = 0; i < cartItems.length; i++) {
-    (function () {
-      var curItem;
-      for (var j = 0; j < state.productList.length; j++) {
-        if (state.productList[j].id === cartItems[i].id) {
-          curItem = state.productList[j];
-          break;
-        }
-      }
-      var q = parseInt(cartItems[i].querySelector('span').textContent.split('x ')[1]);
-      var itemTot = curItem.val * q;
-      var disc = 0;
-      state.itemCnt += q;
-      subTot += itemTot;
-      if (q >= 10) {
-        if (curItem.id === 'p1') disc = 0.1;
-        else if (curItem.id === 'p2') disc = 0.15;
-        else if (curItem.id === 'p3') disc = 0.2;
-        else if (curItem.id === 'p4') disc = 0.05;
-        else if (curItem.id === 'p5') disc = 0.25;
-      }
-      state.totalAmt += itemTot * (1 - disc);
-    })();
+  const cartItems = elements.cartDisp.children;
+  let subTot = 0;
+
+  for (let i = 0; i < cartItems.length; i++) {
+    const itemEl = cartItems[i];
+    const product = findProductById(itemEl.id);
+    const quantity = parseInt(itemEl.querySelector('span').textContent.split('x ')[1]);
+
+    const { itemTotal, discountedTotal, quantity: q } = calculateItemTotal(product, quantity);
+
+    state.itemCnt += q;
+    subTot += itemTotal;
+    state.totalAmt += discountedTotal;
   }
-  let discRate = 0;
-  if (state.itemCnt >= 30) {
-    var bulkDisc = state.totalAmt * 0.25;
-    var itemDisc = subTot - state.totalAmt;
-    if (bulkDisc > itemDisc) {
-      state.totalAmt = subTot * (1 - 0.25);
-      discRate = 0.25;
-    } else {
-      discRate = (subTot - state.totalAmt) / subTot;
-    }
-  } else {
-    discRate = (subTot - state.totalAmt) / subTot;
-  }
-  if (new Date().getDay() === 2) {
-    state.totalAmt *= 1 - 0.1;
-    discRate = Math.max(discRate, 0.1);
-  }
+
+  let { finalAmount, discountRate } = applyBulkDiscount(subTot, state.totalAmt);
+  ({ finalAmount, discountRate } = applyTuesdayDiscount(finalAmount, discountRate));
+
+  state.totalAmt = finalAmount;
   elements.sum.textContent = '총액: ' + Math.round(state.totalAmt) + '원';
-  if (discRate > 0) {
-    const span = createEl('span', { className: 'text-green-500 ml-2', text: '(' + (discRate * 100).toFixed(1) + '% 할인 적용)' });
+
+  if (discountRate > 0) {
+    const span = createEl('span', { className: 'text-green-500 ml-2', text: `(${(discountRate * 100).toFixed(1)}% 할인 적용)` });
     elements.sum.appendChild(span);
   }
+
   updateStockInfo();
   renderBonusPts();
 }
+
+function findProductById(id) {
+  return state.productList.find((product) => product.id === id);
+}
+
+function calculateItemTotal(item, quantity) {
+  let discount = 0;
+  if (quantity >= 10) {
+    discount = CONSTANTS.DISCOUNT_TABLE[item.id] || 0;
+  }
+  return {
+    itemTotal: item.val * quantity,
+    discountedTotal: item.val * quantity * (1 - discount),
+    quantity,
+  };
+}
+
+function applyBulkDiscount(subTotal, totalAmount) {
+  if (state.itemCnt < 30) return { finalAmount: totalAmount, discountRate: (subTotal - totalAmount) / subTotal };
+
+  const bulkDiscountAmt = subTotal * 0.25;
+  const itemDiscountAmt = subTotal - totalAmount;
+
+  if (bulkDiscountAmt > itemDiscountAmt) {
+    return { finalAmount: subTotal * 0.75, discountRate: 0.25 };
+  }
+  return { finalAmount: totalAmount, discountRate: itemDiscountAmt / subTotal };
+}
+
+function applyTuesdayDiscount(totalAmount, currentDiscountRate) {
+  const isTuesday = new Date().getDay() === 2;
+  if (!isTuesday) return { finalAmount: totalAmount, discountRate: currentDiscountRate };
+
+  return {
+    finalAmount: totalAmount * 0.9,
+    discountRate: Math.max(currentDiscountRate, 0.1),
+  };
+}
+
 const renderBonusPts = () => {
   state.bonusPts = Math.floor(state.totalAmt / 1000);
   var ptsTag = document.getElementById('loyalty-points');
