@@ -3,6 +3,7 @@ function createEl(tag, options = {}) {
   if (options.id) el.id = options.id;
   if (options.className) el.className = options.className;
   if (options.text) el.textContent = options.text;
+  if (options.value) el.value = options.value;
   return el;
 }
 
