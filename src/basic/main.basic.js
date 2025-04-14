@@ -1,21 +1,25 @@
+import { CONSTANTS } from './\bconstants/constant.js';
+import ERROR_MESSAGES from './\bconstants/errorMessages.js';
 import buildLayout from './ utils/buildLayout.js';
 import createEl from './ utils/createEl.js';
 import { attachEventListener } from './eventManager.js';
 import { state, elements } from './state.js';
 
 function createUI() {
+  //element 생성
   const root = document.getElementById('app');
-
   elements.cartDisp = createEl('div', { id: 'cart-items', className: '' });
   elements.sum = createEl('div', { id: 'cart-total', className: 'text-xl font-bold my-4' });
   elements.sel = createEl('select', { id: 'product-select', className: 'border rounded p-2 mr-2' });
   elements.addBtn = createEl('button', { id: 'add-to-cart', className: 'bg-blue-500 text-white px-4 py-2 rounded', text: '추가' });
   elements.stockInfo = createEl('div', { id: 'stock-status', className: 'text-sm text-gray-500 mt-2' });
 
+  //Layouy 정의
   const layout = buildLayout();
   root.appendChild(layout);
 }
 
+//초기값 세팅
 function initializeState() {
   state.productList = [
     { id: 'p1', name: '상품1', val: 10000, q: 50 },
@@ -26,31 +30,65 @@ function initializeState() {
   ];
 }
 
+//할인 정보
 function setUpSale() {
-  setTimeout(function () {
-    setInterval(function () {
-      var luckyItem = state.productList[Math.floor(Math.random() * state.productList.length)];
-      if (Math.random() < 0.3 && luckyItem.q > 0) {
-        luckyItem.val = Math.round(luckyItem.val * 0.8);
-        alert('번개세일! ' + luckyItem.name + '이(가) 20% 할인 중입니다!');
-        updateSelOpts();
+  setupFlashSale();
+  setupSuggestions();
+}
+
+function setupFlashSale() {
+  const delay = Math.random() * CONSTANTS.FLASH_SALE.MAX_DELAY;
+
+  setTimeout(() => {
+    setInterval(() => {
+      try {
+        runFlashSale();
+      } catch (error) {
+        console.error(ERROR_MESSAGES.SALE_SYSTEM.FLASH_SALE_ERROR, error);
       }
-    }, 30000);
-  }, Math.random() * 10000);
-  setTimeout(function () {
-    setInterval(function () {
-      if (state.lastSel) {
-        var suggest = state.productList.find(function (item) {
-          return item.id !== state.lastSel && item.q > 0;
-        });
-        if (suggest) {
-          alert(suggest.name + '은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!');
-          suggest.val = Math.round(suggest.val * 0.95);
-          updateSelOpts();
-        }
+    }, CONSTANTS.FLASH_SALE.INTERVAL);
+  }, delay);
+}
+
+function runFlashSale() {
+  if (!state.productList || state.productList.length === 0) {
+    console.warn(ERROR_MESSAGES.SALE_SYSTEM.NO_PRODUCTS);
+    return;
+  }
+  const luckyItem = state.productList[Math.floor(Math.random() * state.productList.length)];
+  if (Math.random() < CONSTANTS.FLASH_SALE.CHANCE && luckyItem.q > 0) {
+    luckyItem.val = Math.round(luckyItem.val * CONSTANTS.SUGGESTION.DISCOUNT_RATE);
+    alert('번개세일! ' + luckyItem.name + '이(가) 20% 할인 중입니다!');
+    updateSelOpts();
+  }
+}
+
+function setupSuggestions() {
+  const delay = Math.random() * CONSTANTS.SUGGESTION.MAX_DELAY;
+
+  setTimeout(() => {
+    setInterval(() => {
+      try {
+        runSuggestion();
+      } catch (error) {
+        console.error('추천 상품 실행 중 오류 발생:', error);
       }
-    }, 60000);
-  }, Math.random() * 20000);
+    }, CONSTANTS.SUGGESTION.INTERVAL);
+  }, delay);
+}
+
+function runSuggestion() {
+  if (!state.lastSel || !state.productList || state.productList.length === 0) {
+    console.warn(ERROR_MESSAGES.SALE_SYSTEM.NO_PRODUCTS);
+    return;
+  }
+
+  const suggest = state.productList.find((item) => item.id !== state.lastSel && item.q > 0);
+  if (suggest) {
+    alert(`${suggest.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`);
+    suggest.val = Math.round(suggest.val * 0.95);
+    updateSelOpts();
+  }
 }
 
 function updateSelOpts() {
