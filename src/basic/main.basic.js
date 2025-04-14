@@ -1,40 +1,32 @@
+import buildLayout from './ utils/buildLayout.js';
+import createEl from './ utils/createEl.js';
 import { attachEventListener } from './eventManager.js';
 import { state, elements } from './state.js';
 
 function createUI() {
   const root = document.getElementById('app');
-  const cont = document.createElement('div');
-  const wrap = document.createElement('div');
-  const hTxt = document.createElement('h1');
-  elements.cartDisp = document.createElement('div');
-  elements.sum = document.createElement('div');
-  elements.sel = document.createElement('select');
-  elements.addBtn = document.createElement('button');
-  elements.stockInfo = document.createElement('div');
-  elements.cartDisp.id = 'cart-items';
-  elements.sum.id = 'cart-total';
-  elements.sel.id = 'product-select';
-  elements.addBtn.id = 'add-to-cart';
-  elements.stockInfo.id = 'stock-status';
-  cont.className = 'bg-gray-100 p-8';
-  wrap.className =
-    'max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl p-8';
-  hTxt.className = 'text-2xl font-bold mb-4';
-  elements.sum.className = 'text-xl font-bold my-4';
-  elements.sel.className = 'border rounded p-2 mr-2';
-  elements.addBtn.className = 'bg-blue-500 text-white px-4 py-2 rounded';
-  elements.stockInfo.className = 'text-sm text-gray-500 mt-2';
-  hTxt.textContent = '장바구니';
-  elements.addBtn.textContent = '추가';
-  updateSelOpts();
-  wrap.appendChild(hTxt);
-  wrap.appendChild(elements.cartDisp);
-  wrap.appendChild(elements.sum);
-  wrap.appendChild(elements.sel);
-  wrap.appendChild(elements.addBtn);
-  wrap.appendChild(elements.stockInfo);
-  cont.appendChild(wrap);
-  root.appendChild(cont);
+
+  elements.cartDisp = createEl('div', { id: 'cart-items', className: '' });
+  elements.sum = createEl('div', {
+    id: 'cart-total',
+    className: 'text-xl font-bold my-4',
+  });
+  elements.sel = createEl('select', {
+    id: 'product-select',
+    className: 'border rounded p-2 mr-2',
+  });
+  elements.addBtn = createEl('button', {
+    id: 'add-to-cart',
+    className: 'bg-blue-500 text-white px-4 py-2 rounded',
+    text: '추가',
+  });
+  elements.stockInfo = createEl('div', {
+    id: 'stock-status',
+    className: 'text-sm text-gray-500 mt-2',
+  });
+
+  const layout = buildLayout();
+  root.appendChild(layout);
 }
 
 function initializeState() {
@@ -77,12 +69,6 @@ function setUpSale() {
   }, Math.random() * 20000);
 }
 
-function main() {
-  initializeState();
-  createUI();
-  calcCart();
-  setUpSale();
-}
 function updateSelOpts() {
   elements.sel.innerHTML = '';
   state.productList.forEach(function (item) {
@@ -175,5 +161,13 @@ function updateStockInfo() {
   });
   elements.stockInfo.textContent = infoMsg;
 }
+function main() {
+  initializeState();
+  createUI();
+  updateSelOpts();
+  calcCart();
+  setUpSale();
+  attachEventListener();
+}
+
 main();
-attachEventListener();
