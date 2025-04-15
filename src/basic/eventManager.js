@@ -2,14 +2,14 @@ import { state, elements } from './state.js';
 
 export function attachEventListener(calcCart) {
   elements.addBtn.addEventListener('click', function () {
-    var selItem = elements.sel.value;
-    var itemToAdd = state.productList.find(function (p) {
+    const selItem = elements.sel.value;
+    const itemToAdd = state.productList.find(function (p) {
       return p.id === selItem;
     });
     if (itemToAdd && itemToAdd.q > 0) {
-      var item = document.getElementById(itemToAdd.id);
+      const item = document.getElementById(itemToAdd.id);
       if (item) {
-        var newQty =
+        const newQty =
           parseInt(item.querySelector('span').textContent.split('x ')[1]) + 1;
         if (newQty <= itemToAdd.q) {
           item.querySelector('span').textContent =
@@ -19,7 +19,7 @@ export function attachEventListener(calcCart) {
           alert('재고가 부족합니다.');
         }
       } else {
-        var newItem = document.createElement('div');
+        let newItem = document.createElement('div');
         newItem.id = itemToAdd.id;
         newItem.className = 'flex justify-between items-center mb-2';
         newItem.innerHTML =
@@ -45,19 +45,19 @@ export function attachEventListener(calcCart) {
     }
   });
   elements.cartDisp.addEventListener('click', function (event) {
-    var tgt = event.target;
+    let tgt = event.target;
     if (
       tgt.classList.contains('quantity-change') ||
       tgt.classList.contains('remove-item')
     ) {
-      var prodId = tgt.dataset.productId;
-      var itemElem = document.getElementById(prodId);
-      var prod = state.productList.find(function (p) {
+      const prodId = tgt.dataset.productId;
+      let itemElem = document.getElementById(prodId);
+      let prod = state.productList.find(function (p) {
         return p.id === prodId;
       });
       if (tgt.classList.contains('quantity-change')) {
-        var qtyChange = parseInt(tgt.dataset.change);
-        var newQty =
+        const qtyChange = parseInt(tgt.dataset.change);
+        const newQty =
           parseInt(itemElem.querySelector('span').textContent.split('x ')[1]) +
           qtyChange;
         if (

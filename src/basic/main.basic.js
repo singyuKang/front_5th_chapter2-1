@@ -187,7 +187,7 @@ function applyTuesdayDiscount(totalAmount, currentDiscountRate) {
 //보너스 포인트 계산후 렌더링
 const renderBonusPts = () => {
   state.bonusPts = Math.floor(state.totalAmt / 1000);
-  var ptsTag = document.getElementById('loyalty-points');
+  let ptsTag = document.getElementById('loyalty-points');
   if (!ptsTag) {
     ptsTag = createEl('span', { id: 'loyalty-points', className: 'text-green-500 ml-2' });
     elements.sum.appendChild(ptsTag);
@@ -197,7 +197,7 @@ const renderBonusPts = () => {
 
 //계산후 재고 업데이트 및 관리
 function updateStockInfo() {
-  var infoMsg = '';
+  let infoMsg = '';
   state.productList.forEach(function (item) {
     if (item.q < 5) {
       infoMsg += item.name + ': ' + (item.q > 0 ? '재고 부족 (' + item.q + '개 남음)' : '품절') + '\n';
