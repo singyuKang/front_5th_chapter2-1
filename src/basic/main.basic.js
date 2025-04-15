@@ -58,7 +58,7 @@ function runFlashSale() {
   const luckyItem = state.productList[Math.floor(Math.random() * state.productList.length)];
   if (Math.random() < CONSTANTS.FLASH_SALE.CHANCE && luckyItem.count > 0) {
     luckyItem.price = Math.round(luckyItem.price * CONSTANTS.SUGGESTION.DISCOUNT_RATE);
-    alert('번개세일! ' + luckyItem.name + '이(가) 20% 할인 중입니다!');
+    alert(`번개세일! ' ${luckyItem.name} 이(가) 20% 할인 중입니다!`);
     updateSelOpts();
   }
 }
