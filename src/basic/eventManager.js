@@ -1,6 +1,12 @@
 import { state, elements } from './state.js';
 
 export function attachEventListener(calcCart) {
+  attachAddToCartHandler(calcCart)
+  attachCartControlHandler(calcCart)
+}
+
+
+function attachAddToCartHandler(calcCart){
   elements.AddToCartButton.addEventListener('click', function () {
     const selItem = elements.ProductSelect.value;
     const itemToAdd = state.productList.find(function (p) {
@@ -44,6 +50,9 @@ export function attachEventListener(calcCart) {
       state.lastSel = selItem;
     }
   });
+}
+
+function attachCartControlHandler(calcCart){
   elements.CartContainer.addEventListener('click', function (event) {
     let tgt = event.target;
     if (
