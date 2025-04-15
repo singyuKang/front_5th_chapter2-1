@@ -86,7 +86,7 @@ function runSuggestion() {
   const suggest = state.productList.find((item) => item.id !== state.lastSel && item.q > 0);
   if (suggest) {
     alert(`${suggest.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`);
-    suggest.val = Math.round(suggest.val * 0.95);
+    suggest.val = Math.round(suggest.val * CONSTANTS.SUGGESTION.DISCOUNT_RATE);
     updateSelOpts();
   }
 }
@@ -103,23 +103,33 @@ function calcCart() {
   state.totalAmt = 0;
   state.itemCnt = 0;
   const cartItems = elements.cartDisp.children;
-  let subTot = 0;
+  let subTotal = 0;
 
+  //장바구니에 담겨있는 요소 확인후 갯수와 값 계산
   for (let i = 0; i < cartItems.length; i++) {
     const itemEl = cartItems[i];
-    const product = findProductById(itemEl.id);
-    const quantity = parseInt(itemEl.querySelector('span').textContent.split('x ')[1]);
+    const product = findProductById(itemEl.id); //  [{ id: 'p1', name: '상품1', val: 10000, q: 50 }, ...]
+    const quantity = parseInt(itemEl.querySelector('span').textContent.split('x ')[1]);// <span>상품1 - 10000원 x 3</span>
 
     const { itemTotal, discountedTotal, quantity: q } = calculateItemTotal(product, quantity);
 
     state.itemCnt += q;
-    subTot += itemTotal;
+    subTotal += itemTotal;
     state.totalAmt += discountedTotal;
   }
 
-  let { finalAmount, discountRate } = applyBulkDiscount(subTot, state.totalAmt);
-  ({ finalAmount, discountRate } = applyTuesdayDiscount(finalAmount, discountRate));
 
+  //일반 할인 처리
+  let bulkResult = applyBulkDiscount(subTotal, state.totalAmt);
+  let finalAmount = bulkResult.finalAmount;
+  let discountRate = bulkResult.discountRate;
+  
+  //화요일 할인 처리
+  let tuesdayResult = applyTuesdayDiscount(finalAmount, discountRate);
+  finalAmount = tuesdayResult.finalAmount;
+  discountRate = tuesdayResult.discountRate;
+
+  //할인값 
   state.totalAmt = finalAmount;
   elements.sum.textContent = '총액: ' + Math.round(state.totalAmt) + '원';
 
@@ -148,18 +158,22 @@ function calculateItemTotal(item, quantity) {
   };
 }
 
+//일반 할인 계산
 function applyBulkDiscount(subTotal, totalAmount) {
-  if (state.itemCnt < 30) return { finalAmount: totalAmount, discountRate: (subTotal - totalAmount) / subTotal };
+  if (state.itemCnt < CONSTANTS.CART.BULK_DISCOUNT_ITEM_COUNT) return { finalAmount: totalAmount, discountRate: (subTotal - totalAmount) / subTotal };
 
-  const bulkDiscountAmt = subTotal * 0.25;
+  const bulkDiscountAmt = subTotal * CONSTANTS.CART.BULK_DISCOUNT_RATE;
   const itemDiscountAmt = subTotal - totalAmount;
 
   if (bulkDiscountAmt > itemDiscountAmt) {
-    return { finalAmount: subTotal * 0.75, discountRate: 0.25 };
+    return { finalAmount: subTotal * 0.75, discountRate: CONSTANTS.CART.BULK_DISCOUNT_RATE };
   }
   return { finalAmount: totalAmount, discountRate: itemDiscountAmt / subTotal };
 }
 
+
+
+//화요일 할인 계산
 function applyTuesdayDiscount(totalAmount, currentDiscountRate) {
   const isTuesday = new Date().getDay() === 2;
   if (!isTuesday) return { finalAmount: totalAmount, discountRate: currentDiscountRate };
@@ -170,6 +184,7 @@ function applyTuesdayDiscount(totalAmount, currentDiscountRate) {
   };
 }
 
+//보너스 포인트 계산후 렌더링
 const renderBonusPts = () => {
   state.bonusPts = Math.floor(state.totalAmt / 1000);
   var ptsTag = document.getElementById('loyalty-points');
@@ -179,6 +194,8 @@ const renderBonusPts = () => {
   }
   ptsTag.textContent = '(포인트: ' + state.bonusPts + ')';
 };
+
+//계산후 재고 업데이트 및 관리
 function updateStockInfo() {
   var infoMsg = '';
   state.productList.forEach(function (item) {

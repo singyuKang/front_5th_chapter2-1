@@ -17,4 +17,9 @@ export const CONSTANTS = {
     p4: 0.05,
     p5: 0.25,
   },
+  CART: {
+    ITEM_DISCOUNT_THRESHOLD: 10,
+    BULK_DISCOUNT_ITEM_COUNT: 30,
+    BULK_DISCOUNT_RATE: 0.25,
+  },
 };

@@ -1,5 +1,5 @@
-import { elements } from '../state';
-import createEl from './createEl';
+import { elements } from '../state.js';
+import createEl from './createEl.js';
 
 function buildLayout() {
   const cont = createEl('div', { className: 'bg-gray-100 p-8' });
