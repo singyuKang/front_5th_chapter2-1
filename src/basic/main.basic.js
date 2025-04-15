@@ -31,7 +31,7 @@ function initializeState() {
 }
 
 //할인 정보
-function setUpSale() {
+function initializeSaleSystem() {
   setupFlashSale();
   setupSuggestions();
 }
@@ -211,7 +211,7 @@ function main() {
   createUI();
   updateSelOpts();
   calcCart();
-  setUpSale();
+  initializeSaleSystem();
   attachEventListener(calcCart);
 }
 
