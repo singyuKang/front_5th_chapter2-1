@@ -83,6 +83,9 @@ describe('basic test', () => {
     });
 
     it('총액이 올바르게 계산되는지 확인', () => {
+      const mockDate=new Date('2024-10-16'); // 수요일
+      vi.useFakeTimers()
+      vi.setSystemTime(mockDate);
       sel.value='p1';
       addBtn.click();
       addBtn.click();
@@ -98,6 +101,9 @@ describe('basic test', () => {
     });
 
     it('포인트가 올바르게 계산되는지 확인', () => {
+      const mockDate=new Date('2024-10-16'); // 수요일
+      vi.useFakeTimers()
+      vi.setSystemTime(mockDate);
       sel.value='p2';
       addBtn.click();
       expect(document.getElementById('loyalty-points').textContent).toContain('(포인트: 128)');

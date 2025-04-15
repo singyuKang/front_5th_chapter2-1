@@ -14,11 +14,11 @@ function buildLayout() {
 
   wrap.append(
     hTxt,
-    elements.cartDisp,
-    elements.sum,
-    elements.sel,
-    elements.addBtn,
-    elements.stockInfo
+    elements.CartContainer,
+    elements.CartSummary,
+    elements.ProductSelect,
+    elements.AddToCartButton,
+    elements.StockInfoText
   );
   cont.appendChild(wrap);
   return cont;
