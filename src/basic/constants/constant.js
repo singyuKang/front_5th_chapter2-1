@@ -5,6 +5,9 @@ export const CONSTANTS = {
     INTERVAL: 30000, // 30초마다 체크
     MAX_DELAY: 10000, // 최대 10초 지연
   },
+  FRIDAY_SALE: {
+    DISCOUNT_RATE: 0.9,
+  },
   SUGGESTION: {
     DISCOUNT_RATE: 0.95, // 5% 할인
     INTERVAL: 60000, // 60초마다 체크
@@ -21,5 +24,8 @@ export const CONSTANTS = {
     ITEM_DISCOUNT_THRESHOLD: 10,
     BULK_DISCOUNT_ITEM_COUNT: 30,
     BULK_DISCOUNT_RATE: 0.25,
+  },
+  POINTS: {
+    EARNING_UNIT: 1000, // 1000원당 1포인트 적립
   },
 };
