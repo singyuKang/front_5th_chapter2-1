@@ -1,3 +1,4 @@
+import ERROR_MESSAGES from './\bconstants/errorMessages.js';
 import { state, elements } from './state.js';
 
 export function attachEventListener(calcCart) {
@@ -24,7 +25,7 @@ function attachAddToCartHandler(calcCart) {
         addItemState.count--;
       }
       if (newQuantity > addItemState.count) {
-        alert('재고가 부족합니다.');
+        alert(ERROR_MESSAGES.PRODUCT.NO_STOCK);
       }
     }
 
@@ -78,7 +79,7 @@ function attachCartControlHandler(calcCart) {
       const productName = spanElem.textContent.split('x ')[0];
 
       if (newQuantity > product.count + currentQuantity) {
-        alert('재고가 부족합니다.');
+        alert(ERROR_MESSAGES.PRODUCT.NO_STOCK);
         return;
       }
 

@@ -71,7 +71,7 @@ function setupSuggestions() {
       try {
         runSuggestion();
       } catch (error) {
-        console.error('추천 상품 실행 중 오류 발생:', error);
+        console.error(ERROR_MESSAGES.SALE_SYSTEM.SUGGESTION_ERROR, error);
       }
     }, CONSTANTS.SUGGESTION.INTERVAL);
   }, delay);
@@ -92,12 +92,16 @@ function runSuggestion() {
 }
 
 function updateSelOpts() {
-  elements.ProductSelect.innerHTML = '';
-  state.productList.forEach(function (item) {
-    const opt = createEl('option', { id: 'add-to-cart', value: item.id, text: item.name + ' - ' + item.price + '원' });
-    if (item.count === 0) opt.disabled = true;
-    elements.ProductSelect.appendChild(opt);
-  });
+  try {
+    elements.ProductSelect.innerHTML = '';
+    state.productList.forEach(function (item) {
+      const opt = createEl('option', { id: 'add-to-cart', value: item.id, text: item.name + ' - ' + item.price + '원' });
+      if (item.count === 0) opt.disabled = true;
+      elements.ProductSelect.appendChild(opt);
+    });
+  } catch (error) {
+    console.error(ERROR_MESSAGES.SALE_SYSTEM.UPDATE_FAILED, error);
+  }
 }
 function calcCart() {
   state.currentTotalAmount = 0;
@@ -142,7 +146,11 @@ function calcCart() {
 }
 
 function findProductById(id) {
-  return state.productList.find((product) => product.id === id);
+  const product = state.productList.find((product) => product.id === id);
+  if (!product) {
+    console.warn(ERROR_MESSAGES.PRODUCT.NOT_FOUND, id);
+  }
+  return product;
 }
 
 function calculateItemTotal(item, quantity) {
