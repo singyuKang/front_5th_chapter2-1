@@ -4,6 +4,7 @@ import createEl from './ utils/createEl.js';
 import { attachEventListener } from './eventManager.js';
 import { state, initializeState } from './state.js';
 import { createUI, elements } from './ui/element.js';
+import { renderBonusPoints, updateSelOpts, updateStockInfo } from './ui/render.js';
 
 //할인 정보
 function initializeSaleSystem() {
@@ -66,18 +67,6 @@ function runSuggestion() {
   }
 }
 
-function updateSelOpts() {
-  try {
-    elements.ProductSelect.innerHTML = '';
-    state.productList.forEach(function (item) {
-      const opt = createEl('option', { id: 'add-to-cart', value: item.id, text: item.name + ' - ' + item.price + '원' });
-      if (item.count === 0) opt.disabled = true;
-      elements.ProductSelect.appendChild(opt);
-    });
-  } catch (error) {
-    console.error(ERROR_MESSAGES.SALE_SYSTEM.UPDATE_FAILED, error);
-  }
-}
 function calculateCartItem() {
   state.currentTotalAmount = 0;
   state.currentItemCount = 0;
@@ -117,7 +106,7 @@ function calculateCartItem() {
   }
 
   updateStockInfo();
-  renderBonusPts();
+  renderBonusPoints();
 }
 
 function findProductById(id) {
@@ -164,27 +153,6 @@ function applyTuesdayDiscount(totalAmount, currentDiscountRate) {
   };
 }
 
-//보너스 포인트 계산후 렌더링
-const renderBonusPts = () => {
-  state.currentBonusPoints = Math.floor(state.currentTotalAmount / CONSTANTS.POINTS.EARNING_UNIT);
-  let ptsTag = document.getElementById('loyalty-points');
-  if (!ptsTag) {
-    ptsTag = createEl('span', { id: 'loyalty-points', className: 'text-green-500 ml-2' });
-    elements.CartSummary.appendChild(ptsTag);
-  }
-  ptsTag.textContent = `(포인트: ${state.currentBonusPoints})`;
-};
-
-//계산후 재고 업데이트 및 관리
-function updateStockInfo() {
-  let infoMsg = '';
-  state.productList.forEach((product) => {
-    if (product.count < CONSTANTS.INVENTORY.LOW_STOCK_THRESHOLD) {
-      infoMsg += `${product.name}: ${product.count > 0 ? `재고 부족 (${product.count}개 남음)` : '품절'}\n`;
-    }
-  });
-  elements.StockInfoText.textContent = infoMsg;
-}
 function main() {
   initializeState();
   createUI();
