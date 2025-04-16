@@ -103,7 +103,7 @@ function updateSelOpts() {
     console.error(ERROR_MESSAGES.SALE_SYSTEM.UPDATE_FAILED, error);
   }
 }
-function calcCart() {
+function calculateCartItem() {
   state.currentTotalAmount = 0;
   state.currentItemCount = 0;
   const cartItems = elements.CartContainer.children;
@@ -203,9 +203,9 @@ const renderBonusPts = () => {
 //계산후 재고 업데이트 및 관리
 function updateStockInfo() {
   let infoMsg = '';
-  state.productList.forEach(function (item) {
-    if (item.count < 5) {
-      infoMsg += `${item.name}: ${item.count > 0 ? `재고 부족 (${item.count}개 남음)` : '품절'}\n`;
+  state.productList.forEach((product) => {
+    if (product.count < CONSTANTS.INVENTORY.LOW_STOCK_THRESHOLD) {
+      infoMsg += `${product.name}: ${product.count > 0 ? `재고 부족 (${product.count}개 남음)` : '품절'}\n`;
     }
   });
   elements.StockInfoText.textContent = infoMsg;
@@ -214,9 +214,9 @@ function main() {
   initializeState();
   createUI();
   updateSelOpts();
-  calcCart();
+  calculateCartItem();
   initializeSaleSystem();
-  attachEventListener(calcCart);
+  attachEventListener(calculateCartItem);
 }
 
 main();

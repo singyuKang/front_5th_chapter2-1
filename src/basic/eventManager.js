@@ -1,12 +1,12 @@
 import ERROR_MESSAGES from './\bconstants/errorMessages.js';
 import { state, elements } from './state.js';
 
-export function attachEventListener(calcCart) {
-  attachAddToCartHandler(calcCart);
-  attachCartControlHandler(calcCart);
+export function attachEventListener(calculateCartItem) {
+  attachAddToCartHandler(calculateCartItem);
+  attachCartControlHandler(calculateCartItem);
 }
 
-function attachAddToCartHandler(calcCart) {
+function attachAddToCartHandler(calculateCartItem) {
   elements.AddToCartButton.addEventListener('click', handleAddToCart);
 
   function handleAddToCart() {
@@ -52,12 +52,12 @@ function attachAddToCartHandler(calcCart) {
       addItemState.count--;
     }
 
-    calcCart();
+    calculateCartItem();
     state.lastSel = selItem;
   }
 }
 
-function attachCartControlHandler(calcCart) {
+function attachCartControlHandler(calculateCartItem) {
   elements.CartContainer.addEventListener('click', handleCartQuantity);
 
   function handleCartQuantity(event) {
@@ -101,6 +101,6 @@ function attachCartControlHandler(calcCart) {
       itemCartContainer.remove();
     }
 
-    calcCart();
+    calculateCartItem();
   }
 }

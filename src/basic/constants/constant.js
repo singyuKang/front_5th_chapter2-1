@@ -28,4 +28,7 @@ export const CONSTANTS = {
   POINTS: {
     EARNING_UNIT: 1000, // 1000원당 1포인트 적립
   },
+  INVENTORY: {
+    LOW_STOCK_THRESHOLD: 5, // 5개 미만이면 재고 부족으로 판단
+  },
 };
