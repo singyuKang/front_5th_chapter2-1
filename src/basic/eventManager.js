@@ -1,5 +1,6 @@
 import ERROR_MESSAGES from './\bconstants/errorMessages.js';
-import { state, elements } from './state.js';
+import { state } from './state.js';
+import { elements } from './ui/element.js';
 
 export function attachEventListener(calculateCartItem) {
   attachAddToCartHandler(calculateCartItem);
