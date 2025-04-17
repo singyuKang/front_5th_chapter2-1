@@ -4,7 +4,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
-  count: number;
+  quantity: number;
 }
 
 export const useProduct = (initialProductList: Product[]) => {
@@ -16,7 +16,7 @@ export const useProduct = (initialProductList: Product[]) => {
         if (product.id === id) {
           return {
             ...product,
-            count: product.count + quantityChange,
+            quantity: product.quantity + quantityChange,
           };
         }
         return product;
@@ -24,5 +24,8 @@ export const useProduct = (initialProductList: Product[]) => {
     );
   };
 
-  return { products, updateProductQuantity };
+  return {
+    products,
+    updateProductQuantity,
+  };
 };
