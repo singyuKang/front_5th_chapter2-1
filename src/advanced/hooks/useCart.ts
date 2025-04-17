@@ -149,11 +149,34 @@ export const useCart = (initialCartState: Cart) => {
     });
   };
 
+  // 특정 상품의 장바구니 가격 업데이트
+  const updateCartPrices = (productId: string, newPrice: number) => {
+    setCart((prevCart) => {
+      // 해당 상품이 장바구니에 있는지 확인
+      const itemInCart = prevCart.cartItems.find(
+        (item) => item.id === productId,
+      );
+
+      if (!itemInCart) return prevCart; // 장바구니에 없으면 변경 없음
+
+      // 장바구니 상품 가격 업데이트
+      const updatedItems = prevCart.cartItems.map((item) =>
+        item.id === productId ? { ...item, price: newPrice } : item,
+      );
+
+      return {
+        ...prevCart,
+        cartItems: updatedItems,
+      };
+    });
+  };
+
   return {
     cart,
     addToCart,
     setSelectedId,
     removeFromCart,
     updateCartItemQuantity,
+    updateCartPrices,
   };
 };

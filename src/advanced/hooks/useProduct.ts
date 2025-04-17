@@ -24,8 +24,23 @@ export const useProduct = (initialProductList: Product[]) => {
     );
   };
 
+  const applyDiscount = (productId: string, discountRate: number) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) => {
+        if (product.id === productId) {
+          return {
+            ...product,
+            price: Math.round(product.price * discountRate),
+          };
+        }
+        return product;
+      }),
+    );
+  };
+
   return {
     products,
     updateProductQuantity,
+    applyDiscount,
   };
 };

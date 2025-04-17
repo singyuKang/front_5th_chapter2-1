@@ -1,21 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { CONSTANTS } from '../constants/constants.ts';
 import ERROR_MESSAGES from '../constants/errorMessages.ts';
 import { Product } from './useProduct.ts';
 
 interface SaleSystemParams {
   products: Product[];
+  applyDiscount: (productId: string, discountRate: number) => void;
+  updateCartPrices: (productId: string, newPrice: number) => void;
 }
 
-export const useSalesSystem = ({ products }: SaleSystemParams) => {
+export const useSalesSystem = ({
+  products,
+  applyDiscount,
+  updateCartPrices,
+}: SaleSystemParams) => {
+  const flashSaleTimerRef = useRef<number | null>(null);
+  const flashSaleIntervalRef = useRef<number | null>(null);
+
   useEffect(() => {
     setupFlashSale();
-  });
+
+    return () => {
+      if (flashSaleTimerRef.current) clearTimeout(flashSaleTimerRef.current);
+      if (flashSaleIntervalRef.current)
+        clearInterval(flashSaleIntervalRef.current);
+    };
+  }, []);
+
   function setupFlashSale() {
     const delay = Math.random() * CONSTANTS.FLASH_SALE.MAX_DELAY;
 
-    setTimeout(() => {
-      setInterval(() => {
+    flashSaleTimerRef.current = setTimeout(() => {
+      flashSaleIntervalRef.current = setInterval(() => {
         try {
           runFlashSale();
         } catch (error) {
@@ -24,22 +40,32 @@ export const useSalesSystem = ({ products }: SaleSystemParams) => {
       }, CONSTANTS.FLASH_SALE.INTERVAL);
     }, delay);
   }
+
   function runFlashSale() {
     if (!products || products.length === 0) {
       console.warn(ERROR_MESSAGES.SALE_SYSTEM.NO_PRODUCTS);
       return;
     }
-    const luckyItem = products[Math.floor(Math.random() * products.length)];
+
+    const luckyItemIndex = Math.floor(Math.random() * products.length);
+    const luckyItem = products[luckyItemIndex];
+
     if (Math.random() < CONSTANTS.FLASH_SALE.CHANCE && luckyItem.quantity > 0) {
-      luckyItem.price = Math.round(
-        luckyItem.price * CONSTANTS.SUGGESTION.DISCOUNT_RATE,
-      );
+      const discountRate = CONSTANTS.FLASH_SALE.DISCOUNT_RATE;
+      const newPrice = Math.round(luckyItem.price * discountRate);
+
+      // 상품 가격 업데이트
+      applyDiscount(luckyItem.id, discountRate);
+
+      // 장바구니에 있는 동일 상품의 가격도 업데이트
+      updateCartPrices(luckyItem.id, newPrice);
+
       alert(`번개세일! ${luckyItem.name} 이(가) 20% 할인 중입니다!`);
-      //   updateSelOpts();
     }
   }
-};
 
+  return { runFlashSale };
+};
 // function setupSuggestions() {
 //   const delay = Math.random() * CONSTANTS.SUGGESTION.MAX_DELAY;
 
