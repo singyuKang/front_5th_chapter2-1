@@ -83,7 +83,7 @@ export function applyBulkDiscount(subTotal, totalAmount) {
 
   if (bulkDiscountAmt > itemDiscountAmt) {
     return {
-      finalAmount: subTotal * 1 - CONSTANTS.CART.BULK_DISCOUNT_RATE,
+      finalAmount: subTotal * (1 - CONSTANTS.CART.BULK_DISCOUNT_RATE),
       discountRate: CONSTANTS.CART.BULK_DISCOUNT_RATE,
     };
   }
