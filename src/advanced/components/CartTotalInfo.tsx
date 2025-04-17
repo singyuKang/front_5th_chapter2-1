@@ -11,6 +11,7 @@ const CartTotalInfo: React.FC<CartTotalInfoProps> = ({
   discountRate,
   bonusPoints,
 }) => {
+  // console.log('🚀 ~ discountRate:', discountRate);
   return (
     <div id="cart-total" className="text-xl font-bold my-4">
       총액: {Math.round(totalAmount)}원
