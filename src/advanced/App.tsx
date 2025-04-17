@@ -114,13 +114,7 @@ const App: React.FC = () => {
         selectedId={cart.selectedId}
         onSelect={handleProductSelect}
       />
-      <CartAddButton
-        onClick={handleAddToCart}
-        disabled={
-          !cart.selectedId ||
-          !products.find((p) => p.id === cart.selectedId)?.quantity
-        }
-      />
+      <CartAddButton onClick={handleAddToCart} />
       <StockStatus />
     </CartConatiner>
   );
