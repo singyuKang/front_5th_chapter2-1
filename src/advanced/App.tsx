@@ -9,6 +9,7 @@ import CartItemContainer from './components/CartItemContainer';
 import { useProduct } from './hooks/useProduct';
 import { useCart } from './hooks/useCart';
 import CartAddButton from './components/CartAddButton';
+import { useSalesSystem } from './hooks/useSalesSystem';
 
 const App: React.FC = () => {
   const initialProductList = [
@@ -37,6 +38,9 @@ const App: React.FC = () => {
     removeFromCart,
     updateCartItemQuantity,
   } = useCart(initialCartState);
+  // console.log('🚀 ~ cart:', cart);
+
+  useSalesSystem({ products });
 
   useEffect(() => {
     const firstAvailableProduct = products.find((p) => p.quantity > 0);
