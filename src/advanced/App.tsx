@@ -30,8 +30,13 @@ const App: React.FC = () => {
 
   const { products, updateProductQuantity } = useProduct(initialProductList);
   // console.log('🚀 ~ products:', products);
-  const { cart, addToCart, setSelectedId, removeFromCart } =
-    useCart(initialCartState);
+  const {
+    cart,
+    addToCart,
+    setSelectedId,
+    removeFromCart,
+    updateCartItemQuantity,
+  } = useCart(initialCartState);
 
   const handleProductSelect = (productId: string) => {
     setSelectedId(productId);
@@ -58,6 +63,18 @@ const App: React.FC = () => {
     }
   };
 
+  const handleQuantityChange = (productId: string, change: number) => {
+    const product = products.find((p) => p.id === productId);
+
+    if (change > 0 && (!product || product.quantity <= 0)) {
+      alert('재고가 부족합니다.');
+      return;
+    }
+
+    updateCartItemQuantity(productId, change);
+    updateProductQuantity(productId, -change);
+  };
+
   return (
     <CartConatiner>
       <CartHeader />
@@ -66,6 +83,7 @@ const App: React.FC = () => {
           <CartItem
             key={cartItem.id}
             cartItem={cartItem}
+            handleQuantityChange={handleQuantityChange}
             onRemove={handleRemoveFromCart}
           />
         ))}

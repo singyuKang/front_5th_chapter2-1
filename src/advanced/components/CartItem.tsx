@@ -3,10 +3,15 @@ import { CartItem } from '../hooks/useCart';
 
 interface CartItemProps {
   cartItem: CartItem;
+  handleQuantityChange: (productId: string, change: number) => void;
   onRemove: (id: string) => void;
 }
 
-const CartItem = ({ cartItem, onRemove }: CartItemProps) => {
+const CartItem = ({
+  cartItem,
+  onRemove,
+  handleQuantityChange,
+}: CartItemProps) => {
   return (
     <div className="flex justify-between items-center mb-2">
       <span>
@@ -17,7 +22,9 @@ const CartItem = ({ cartItem, onRemove }: CartItemProps) => {
           className={`quantity-change bg-blue-500 text-white px-2 py-1 rounded mr-1`}
           data-product-id={`${cartItem.id}`}
           data-change="-1"
-          onClick={() => {}}
+          onClick={() => {
+            handleQuantityChange(cartItem.id, -1);
+          }}
         >
           -
         </button>
@@ -27,6 +34,7 @@ const CartItem = ({ cartItem, onRemove }: CartItemProps) => {
           data-change="1"
           onClick={() => {
             // 수량 증가 로직
+            handleQuantityChange(cartItem.id, 1);
           }}
         >
           +

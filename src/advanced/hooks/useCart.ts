@@ -67,10 +67,33 @@ export const useCart = (initialCartState: Cart) => {
     }));
   };
 
+  const updateCartItemQuantity = (productId: string, change: number) => {
+    setCart((prevCart) => {
+      const updatedItems = prevCart.cartItems
+        .map((item) => {
+          if (item.id === productId) {
+            const newQuantity = item.quantity + change;
+            if (newQuantity <= 0) {
+              return null; // Will be filtered out below
+            }
+            return { ...item, quantity: newQuantity };
+          }
+          return item;
+        })
+        .filter(Boolean) as CartItem[];
+
+      return {
+        ...prevCart,
+        cartItems: updatedItems,
+      };
+    });
+  };
+
   return {
     cart,
     addToCart,
     setSelectedId,
     removeFromCart,
+    updateCartItemQuantity,
   };
 };
