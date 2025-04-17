@@ -29,8 +29,9 @@ const App: React.FC = () => {
   };
 
   const { products, updateProductQuantity } = useProduct(initialProductList);
-  console.log('🚀 ~ products:', products);
-  const { cart, addToCart, setSelectedId } = useCart(initialCartState);
+  // console.log('🚀 ~ products:', products);
+  const { cart, addToCart, setSelectedId, removeFromCart } =
+    useCart(initialCartState);
 
   const handleProductSelect = (productId: string) => {
     setSelectedId(productId);
@@ -49,12 +50,24 @@ const App: React.FC = () => {
     updateProductQuantity(product.id, -1);
   };
 
+  const handleRemoveFromCart = (productId: string) => {
+    const cartItem = cart.cartItems.find((item) => item.id === productId);
+    if (cartItem) {
+      updateProductQuantity(productId, cartItem.quantity);
+      removeFromCart(productId);
+    }
+  };
+
   return (
     <CartConatiner>
       <CartHeader />
       <CartItemContainer>
         {cart.cartItems.map((cartItem) => (
-          <CartItem key={cartItem.id} cartItem={cartItem} />
+          <CartItem
+            key={cartItem.id}
+            cartItem={cartItem}
+            onRemove={handleRemoveFromCart}
+          />
         ))}
       </CartItemContainer>
       <CartTotalInfo />

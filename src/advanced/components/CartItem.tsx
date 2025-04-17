@@ -3,9 +3,10 @@ import { CartItem } from '../hooks/useCart';
 
 interface CartItemProps {
   cartItem: CartItem;
+  onRemove: (id: string) => void;
 }
 
-const CartItem = ({ cartItem }: CartItemProps) => {
+const CartItem = ({ cartItem, onRemove }: CartItemProps) => {
   return (
     <div className="flex justify-between items-center mb-2">
       <span>
@@ -35,6 +36,7 @@ const CartItem = ({ cartItem }: CartItemProps) => {
           data-product-id={`${cartItem.id}`}
           onClick={() => {
             // 삭제 로직
+            onRemove(cartItem.id);
           }}
         >
           삭제
