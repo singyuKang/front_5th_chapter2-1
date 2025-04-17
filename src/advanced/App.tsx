@@ -31,7 +31,6 @@ const App: React.FC = () => {
 
   const { products, updateProductQuantity, applyDiscount } =
     useProduct(initialProductList);
-  // console.log('🚀 ~ products:', products);
   const {
     cart,
     addToCart,
@@ -40,9 +39,13 @@ const App: React.FC = () => {
     updateCartItemQuantity,
     updateCartPrices,
   } = useCart(initialCartState);
-  // console.log('🚀 ~ cart:', cart);
 
-  useSalesSystem({ products, applyDiscount, updateCartPrices });
+  useSalesSystem({
+    products,
+    selectedId: cart.selectedId,
+    applyDiscount,
+    updateCartPrices,
+  });
 
   useEffect(() => {
     const firstAvailableProduct = products.find((p) => p.quantity > 0);

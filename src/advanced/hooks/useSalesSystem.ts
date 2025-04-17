@@ -5,27 +5,50 @@ import { Product } from './useProduct.ts';
 
 interface SaleSystemParams {
   products: Product[];
+  selectedId: string | null;
   applyDiscount: (productId: string, discountRate: number) => void;
   updateCartPrices: (productId: string, newPrice: number) => void;
 }
 
 export const useSalesSystem = ({
   products,
+  selectedId,
   applyDiscount,
   updateCartPrices,
 }: SaleSystemParams) => {
   const flashSaleTimerRef = useRef<number | null>(null);
   const flashSaleIntervalRef = useRef<number | null>(null);
+  const suggestionTimerRef = useRef<number | null>(null);
+  const suggestionIntervalRef = useRef<number | null>(null);
 
+  // 컴포넌트 마운트 시에만 Flash Sale 설정
   useEffect(() => {
     setupFlashSale();
-
     return () => {
       if (flashSaleTimerRef.current) clearTimeout(flashSaleTimerRef.current);
       if (flashSaleIntervalRef.current)
         clearInterval(flashSaleIntervalRef.current);
     };
   }, []);
+
+  // selectedId가 변경될 때마다 추천 시스템 재설정
+  useEffect(() => {
+    // 이전 타이머 정리
+    if (suggestionTimerRef.current) clearTimeout(suggestionTimerRef.current);
+    if (suggestionIntervalRef.current)
+      clearInterval(suggestionIntervalRef.current);
+
+    // selectedId가 있을 때만 추천 시스템 설정
+    if (selectedId) {
+      setupSuggestions();
+    }
+
+    return () => {
+      if (suggestionTimerRef.current) clearTimeout(suggestionTimerRef.current);
+      if (suggestionIntervalRef.current)
+        clearInterval(suggestionIntervalRef.current);
+    };
+  }, [selectedId]);
 
   function setupFlashSale() {
     const delay = Math.random() * CONSTANTS.FLASH_SALE.MAX_DELAY;
@@ -64,36 +87,48 @@ export const useSalesSystem = ({
     }
   }
 
+  function setupSuggestions() {
+    const delay = Math.random() * CONSTANTS.SUGGESTION.MAX_DELAY;
+
+    suggestionTimerRef.current = setTimeout(() => {
+      suggestionIntervalRef.current = setInterval(() => {
+        try {
+          runSuggestion();
+        } catch (error) {
+          console.error(ERROR_MESSAGES.SALE_SYSTEM.SUGGESTION_ERROR, error);
+        }
+      }, CONSTANTS.SUGGESTION.INTERVAL);
+    }, delay);
+  }
+
+  function runSuggestion() {
+    if (!selectedId || !products || products.length === 0) {
+      console.warn(ERROR_MESSAGES.SALE_SYSTEM.NO_PRODUCTS);
+      return;
+    }
+
+    // 선택된 상품이 아니면서 재고가 있는 상품 찾기
+    const availableProducts = products.filter(
+      (item) => item.id !== selectedId && item.quantity > 0,
+    );
+
+    if (availableProducts.length > 0) {
+      // 랜덤으로 한 상품 선택
+      const suggestIndex = Math.floor(Math.random() * availableProducts.length);
+      const suggest = availableProducts[suggestIndex];
+
+      const discountRate = CONSTANTS.SUGGESTION.DISCOUNT_RATE;
+      const newPrice = Math.round(suggest.price * discountRate);
+
+      // 상품 가격 업데이트
+      applyDiscount(suggest.id, discountRate);
+
+      // 장바구니에 있는 동일 상품의 가격도 업데이트
+      updateCartPrices(suggest.id, newPrice);
+
+      alert(`${suggest.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`);
+    }
+  }
+
   return { runFlashSale };
 };
-// function setupSuggestions() {
-//   const delay = Math.random() * CONSTANTS.SUGGESTION.MAX_DELAY;
-
-//   setTimeout(() => {
-//     setInterval(() => {
-//       try {
-//         runSuggestion();
-//       } catch (error) {
-//         console.error(ERROR_MESSAGES.SALE_SYSTEM.SUGGESTION_ERROR, error);
-//       }
-//     }, CONSTANTS.SUGGESTION.INTERVAL);
-//   }, delay);
-// }
-
-// function runSuggestion() {
-//   if (!state.selected || !state.productList || state.productList.length === 0) {
-//     console.warn(ERROR_MESSAGES.SALE_SYSTEM.NO_PRODUCTS);
-//     return;
-//   }
-
-//   const suggest = state.productList.find(
-//     (item) => item.id !== state.selected && item.count > 0,
-//   );
-//   if (suggest) {
-//     alert(`${suggest.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`);
-//     suggest.price = Math.round(
-//       suggest.price * CONSTANTS.SUGGESTION.DISCOUNT_RATE,
-//     );
-//     updateSelOpts();
-//   }
-// }
