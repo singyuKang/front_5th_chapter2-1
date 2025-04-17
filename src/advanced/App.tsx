@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CartConatiner from './components/CartContainer';
 import CartItem from './components/CartItem';
 import CartTotalInfo from './components/CartTotalInfo';
@@ -37,6 +37,13 @@ const App: React.FC = () => {
     removeFromCart,
     updateCartItemQuantity,
   } = useCart(initialCartState);
+
+  useEffect(() => {
+    const firstAvailableProduct = products.find((p) => p.quantity > 0);
+    if (firstAvailableProduct && !cart.selectedId) {
+      setSelectedId(firstAvailableProduct.id);
+    }
+  }, [products]);
 
   const handleProductSelect = (productId: string) => {
     setSelectedId(productId);

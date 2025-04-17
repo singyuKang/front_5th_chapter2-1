@@ -19,9 +19,9 @@ const ProductSelect = ({
       value={selectedId || ''}
       onChange={(e) => onSelect(e.target.value)}
     >
-      <option value="" disabled>
+      {/* <option value="" disabled>
         상품을 선택하세요
-      </option>
+      </option> */}
       {products.map((product) => (
         <option
           key={product.id}
@@ -29,7 +29,6 @@ const ProductSelect = ({
           disabled={product.quantity === 0}
         >
           {product.name} - {product.price}원{' '}
-          {product.quantity === 0 ? '(품절)' : ''}
         </option>
       ))}
     </select>
