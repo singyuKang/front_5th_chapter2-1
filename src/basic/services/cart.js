@@ -1,5 +1,5 @@
-import { CONSTANTS } from '../\bconstants/constant';
-import ERROR_MESSAGES from '../\bconstants/errorMessages';
+import { CONSTANTS } from '../constants/constant';
+import ERROR_MESSAGES from '../constants/errorMessages';
 import createEl from '../ utils/createEl';
 import { state } from '../state';
 import { elements } from '../ui/element';
@@ -16,9 +16,15 @@ export function calculateCartItem() {
   for (let i = 0; i < cartItems.length; i++) {
     const itemEl = cartItems[i];
     const product = findProductById(itemEl.id);
-    const quantity = parseInt(itemEl.querySelector('span').textContent.split('x ')[1]);
+    const quantity = parseInt(
+      itemEl.querySelector('span').textContent.split('x ')[1],
+    );
 
-    const { itemTotal, discountedTotal, quantity: count } = calculateItemTotal(product, quantity);
+    const {
+      itemTotal,
+      discountedTotal,
+      quantity: count,
+    } = calculateItemTotal(product, quantity);
 
     state.currentItemCount += count;
     subTotal += itemTotal;
@@ -40,7 +46,10 @@ export function calculateCartItem() {
   elements.CartSummary.textContent = `총액: ${Math.round(state.currentTotalAmount)}원`;
 
   if (discountRate > 0) {
-    const span = createEl('span', { className: 'text-green-500 ml-2', text: `(${(discountRate * 100).toFixed(1)}% 할인 적용)` });
+    const span = createEl('span', {
+      className: 'text-green-500 ml-2',
+      text: `(${(discountRate * 100).toFixed(1)}% 할인 적용)`,
+    });
     elements.CartSummary.appendChild(span);
   }
 

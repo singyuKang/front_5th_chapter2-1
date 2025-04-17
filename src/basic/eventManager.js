@@ -1,4 +1,4 @@
-import ERROR_MESSAGES from './\bconstants/errorMessages.js';
+import ERROR_MESSAGES from './constants/errorMessages.js';
 import { state } from './state.js';
 import { elements } from './ui/element.js';
 
@@ -12,17 +12,27 @@ function attachAddToCartHandler(calculateCartItem) {
 
   function handleAddToCart() {
     const selItem = elements.ProductSelect.value;
-    const addItemState = state.productList.find((product) => product.id === selItem);
+    const addItemState = state.productList.find(
+      (product) => product.id === selItem,
+    );
 
     if (!addItemState || addItemState.count <= 0) return;
 
     const addItemCartContainer = document.getElementById(addItemState.id);
 
     if (addItemCartContainer) {
-      const newQuantity = parseInt(addItemCartContainer.querySelector('span').textContent.split('x ')[1]) + 1;
+      const newQuantity =
+        parseInt(
+          addItemCartContainer.querySelector('span').textContent.split('x ')[1],
+        ) + 1;
 
       if (newQuantity <= addItemState.count) {
-        addItemCartContainer.querySelector('span').textContent = addItemState.name + ' - ' + addItemState.price + '원 x ' + newQuantity;
+        addItemCartContainer.querySelector('span').textContent =
+          addItemState.name +
+          ' - ' +
+          addItemState.price +
+          '원 x ' +
+          newQuantity;
         addItemState.count--;
       }
       if (newQuantity > addItemState.count) {
@@ -64,7 +74,11 @@ function attachCartControlHandler(calculateCartItem) {
   function handleCartQuantity(event) {
     const targetElement = event.target;
 
-    if (!targetElement.classList.contains('quantity-change') && !targetElement.classList.contains('remove-item')) return;
+    if (
+      !targetElement.classList.contains('quantity-change') &&
+      !targetElement.classList.contains('remove-item')
+    )
+      return;
 
     const productId = targetElement.dataset.productId;
     let itemCartContainer = document.getElementById(productId);
@@ -97,7 +111,9 @@ function attachCartControlHandler(calculateCartItem) {
 
     //삭제 처리
     if (targetElement.classList.contains('remove-item')) {
-      const removeQuantity = parseInt(itemCartContainer.querySelector('span').textContent.split('x ')[1]);
+      const removeQuantity = parseInt(
+        itemCartContainer.querySelector('span').textContent.split('x ')[1],
+      );
       product.count += removeQuantity;
       itemCartContainer.remove();
     }

@@ -1,5 +1,5 @@
-import { CONSTANTS } from '../\bconstants/constant';
-import ERROR_MESSAGES from '../\bconstants/errorMessages';
+import { CONSTANTS } from '../constants/constant';
+import ERROR_MESSAGES from '../constants/errorMessages';
 import createEl from '../ utils/createEl';
 import { state } from '../state';
 import { elements } from './element';
@@ -34,10 +34,15 @@ export function updateStockInfo() {
 
 //보너스 포인트 계산후 렌더링
 export const renderBonusPoints = () => {
-  state.currentBonusPoints = Math.floor(state.currentTotalAmount / CONSTANTS.POINTS.EARNING_UNIT);
+  state.currentBonusPoints = Math.floor(
+    state.currentTotalAmount / CONSTANTS.POINTS.EARNING_UNIT,
+  );
   let ptsTag = document.getElementById('loyalty-points');
   if (!ptsTag) {
-    ptsTag = createEl('span', { id: 'loyalty-points', className: 'text-green-500 ml-2' });
+    ptsTag = createEl('span', {
+      id: 'loyalty-points',
+      className: 'text-green-500 ml-2',
+    });
     elements.CartSummary.appendChild(ptsTag);
   }
   ptsTag.textContent = `(포인트: ${state.currentBonusPoints})`;
