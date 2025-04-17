@@ -88,7 +88,11 @@ const App: React.FC = () => {
           />
         ))}
       </CartItemContainer>
-      <CartTotalInfo />
+      <CartTotalInfo
+        totalAmount={cart.currentTotalAmount}
+        discountRate={cart.discountRate}
+        bonusPoints={cart.currentBonusPoints}
+      />
       <ProductSelect
         products={products}
         selectedId={cart.selectedId}

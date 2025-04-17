@@ -41,7 +41,7 @@ export const renderBonusPoints = () => {
   if (!ptsTag) {
     ptsTag = createEl('span', {
       id: 'loyalty-points',
-      className: 'text-green-500 ml-2',
+      className: 'text-blue-500 ml-2',
     });
     elements.CartSummary.appendChild(ptsTag);
   }
