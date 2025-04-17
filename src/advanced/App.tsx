@@ -115,7 +115,7 @@ const App: React.FC = () => {
         onSelect={handleProductSelect}
       />
       <CartAddButton onClick={handleAddToCart} />
-      <StockStatus />
+      <StockStatus products={products} />
     </CartConatiner>
   );
 };
