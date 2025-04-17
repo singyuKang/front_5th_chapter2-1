@@ -33,12 +33,10 @@ export const useSalesSystem = ({
 
   // selectedId가 변경될 때마다 추천 시스템 재설정
   useEffect(() => {
-    // 이전 타이머 정리
     if (suggestionTimerRef.current) clearTimeout(suggestionTimerRef.current);
     if (suggestionIntervalRef.current)
       clearInterval(suggestionIntervalRef.current);
 
-    // selectedId가 있을 때만 추천 시스템 설정
     if (selectedId) {
       setupSuggestions();
     }
@@ -77,10 +75,8 @@ export const useSalesSystem = ({
       const discountRate = CONSTANTS.FLASH_SALE.DISCOUNT_RATE;
       const newPrice = Math.round(luckyItem.price * discountRate);
 
-      // 상품 가격 업데이트
       applyDiscount(luckyItem.id, discountRate);
 
-      // 장바구니에 있는 동일 상품의 가격도 업데이트
       updateCartPrices(luckyItem.id, newPrice);
 
       alert(`번개세일! ${luckyItem.name} 이(가) 20% 할인 중입니다!`);
@@ -107,23 +103,19 @@ export const useSalesSystem = ({
       return;
     }
 
-    // 선택된 상품이 아니면서 재고가 있는 상품 찾기
     const availableProducts = products.filter(
       (item) => item.id !== selectedId && item.quantity > 0,
     );
 
     if (availableProducts.length > 0) {
-      // 랜덤으로 한 상품 선택
       const suggestIndex = Math.floor(Math.random() * availableProducts.length);
       const suggest = availableProducts[suggestIndex];
 
       const discountRate = CONSTANTS.SUGGESTION.DISCOUNT_RATE;
       const newPrice = Math.round(suggest.price * discountRate);
 
-      // 상품 가격 업데이트
       applyDiscount(suggest.id, discountRate);
 
-      // 장바구니에 있는 동일 상품의 가격도 업데이트
       updateCartPrices(suggest.id, newPrice);
 
       alert(`${suggest.name}은(는) 어떠세요? 지금 구매하시면 5% 추가 할인!`);
