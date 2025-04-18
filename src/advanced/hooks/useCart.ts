@@ -39,7 +39,9 @@ export const useCart = (initialCartState: Cart) => {
             ? { ...item, quantity: item.quantity + 1 }
             : item,
         );
-      } else {
+      }
+
+      if (!existingItem) {
         updatedItems = [
           ...prevCart.cartItems,
           {
